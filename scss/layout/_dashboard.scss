@@ -5,17 +5,6 @@
     flex-direction: column;
 }
 
-.main-header {
-    height: $header-h;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    background: $primary;
-    color: $white;
-    flex-shrink: 0; // No se achica
-}
-
 .viewport-main {
     flex: 1;
     overflow-y: auto; // Solo el grid puede tener scroll si es estrictamente necesario

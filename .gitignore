@@ -1,0 +1,12 @@
+# Dependencias
+node_modules/
+
+# Archivos de sistema y logs
+.DS_Store
+*.log
+
+# Si llegas a tener variables de entorno
+.env
+
+# Archivos de compilación de Sass si no quieres subirlos (opcional)
+*.css.map
