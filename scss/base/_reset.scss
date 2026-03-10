@@ -1,0 +1,14 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: $font-main;
+    background-color: $bg-body;
+    color: $text;
+    overflow: hidden; // CRÍTICO: Bloquea el scroll de la ventana
+}
+
+button { cursor: pointer; border: none; font-family: inherit; }

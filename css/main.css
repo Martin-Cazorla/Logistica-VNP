@@ -1,0 +1,397 @@
+@charset "UTF-8";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f0f2f5;
+  color: #1a1a1a;
+  overflow: hidden;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+.dashboard-root {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: #003366;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.viewport-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #f0f2f5;
+}
+
+.units-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  align-content: start;
+}
+
+.main-nav {
+  height: 50px;
+  background: #ffffff;
+  border-top: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+
+.grid-divider {
+  grid-column: 1/-1;
+  border-bottom: 3px solid #003366;
+  margin: 25px 0 10px 0;
+  display: flex;
+  align-items: flex-end;
+}
+.grid-divider span {
+  background: #003366;
+  color: white;
+  padding: 5px 15px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 5px 5px 0 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.unit-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 8px;
+  border-left: 5px solid #dcdcdc;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.unit-card:hover {
+  transform: scale(1.02);
+}
+.unit-card.size-grande {
+  border-top: 4px solid #003366;
+}
+.unit-card.size-chica {
+  border-top: 4px solid #aaa;
+}
+.unit-card.status-absent {
+  filter: grayscale(1) !important;
+  opacity: 0.6 !important;
+  background-color: #f2f2f2 !important;
+  border-left-color: #888 !important;
+  border-top-color: #888 !important;
+}
+.unit-card.status-absent .unit-id, .unit-card.status-absent .driver-name, .unit-card.status-absent .v-count {
+  color: #666;
+}
+.unit-card.status-absent .btn-banda, .unit-card.status-absent .btn-edit-unit {
+  pointer-events: none;
+  opacity: 0.3;
+}
+.unit-card.status-absent .select-ingreso {
+  pointer-events: auto;
+  opacity: 1;
+}
+.unit-card.alert-campo {
+  animation: pulse-border 2s infinite;
+  border-left-color: #e30613 !important;
+  background-color: #fff8f8;
+}
+.unit-card.alert-campo .unit-badge {
+  display: inline-block !important;
+  background: #e30613;
+  color: white;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  border-radius: 4px;
+  margin-left: 5px;
+  text-transform: uppercase;
+}
+.unit-card.alert-campo .btn-campo-toggle {
+  filter: grayscale(0) !important;
+  color: #e30613;
+}
+.unit-card.status-complete {
+  filter: grayscale(0.8);
+  background-color: #e8f5e9;
+  border-left-color: #28a745;
+}
+.unit-card.status-complete::after {
+  content: "JORNADA CUMPLIDA";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  border: 2px solid #28a745;
+  color: #28a745;
+  padding: 5px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+}
+.unit-card.status-complete .v-count {
+  color: #28a745;
+}
+.unit-card.status-complete.status-extra {
+  border-left-color: #e30613 !important;
+}
+.unit-card.status-complete.status-extra::after {
+  content: "VUELTA EXTRA" !important;
+  color: #e30613 !important;
+  border-color: #e30613 !important;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+}
+.unit-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.unit-card .card-header .unit-id {
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.unit-card .header-right {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.unit-card .btn-campo-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  filter: grayscale(1);
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+}
+.unit-card .btn-campo-toggle .unit-badge {
+  display: none;
+}
+.unit-card .btn-delete-card {
+  background: transparent;
+  font-size: 1rem;
+  padding: 2px;
+  border: none;
+  cursor: pointer;
+}
+.unit-card .btn-delete-card:hover {
+  background: rgba(227, 6, 19, 0.1);
+  border-radius: 4px;
+}
+.unit-card .driver-name {
+  font-size: 0.75rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.unit-card .bandas-check-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin: 10px 0;
+}
+.unit-card .bandas-check-group .btn-banda {
+  font-size: 0.65rem;
+  padding: 4px;
+  border: 1px solid #dcdcdc;
+  background: #f8f9fa;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.unit-card .bandas-check-group .btn-banda.active {
+  background: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+.unit-card .bandas-check-group .btn-banda.active::after {
+  content: " ✓";
+}
+.unit-card .vueltas-counter {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 5px 0;
+}
+.unit-card .card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+.unit-card .select-ingreso {
+  padding: 4px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #dcdcdc;
+  background-color: #f0f2f5;
+  font-weight: 600;
+  color: #003366;
+}
+.unit-card .select-ingreso:focus {
+  border-color: #003366;
+  outline: none;
+}
+.unit-card .btn-edit-unit {
+  background: #003366;
+  color: white;
+  font-size: 0.7rem;
+  padding: 6px;
+  border-radius: 4px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(227, 6, 19, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(227, 6, 19, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(227, 6, 19, 0);
+  }
+}
+.mini-kpi {
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.modal-base {
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  width: 95%;
+  max-width: 600px;
+  max-height: 90vh;
+}
+.modal-base::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+}
+.modal-base .modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+.modal-base .modal-content header {
+  background-color: #003366;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-base .modal-content header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.modal-base .modal-content header #close-modal {
+  background: transparent;
+  color: white;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.modal-base .modal-content #vueltas-detalle-container {
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+.modal-base .modal-content footer {
+  padding: 15px 20px;
+  border-top: 1px solid #dcdcdc;
+  display: flex;
+  justify-content: flex-end;
+  background: white;
+}
+
+.vuelta-block {
+  background: white;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 15px;
+}
+.vuelta-block.asignada {
+  border-left-color: #28a745;
+  background-color: rgba(40, 167, 69, 0.05);
+}
+.vuelta-block.asignada .vuelta-header {
+  color: rgb(30.1449275362, 125.8550724638, 52);
+}
+.vuelta-block.asignada .vuelta-header::after {
+  content: " - REGISTRADA ✓";
+  font-size: 0.7rem;
+}
+.vuelta-block .vuelta-header {
+  font-weight: 800;
+  color: #003366;
+  border-bottom: 2px solid #f0f2f5;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.vuelta-block .vuelta-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+.vuelta-block .vuelta-body .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.vuelta-block .vuelta-body .input-group label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #555;
+}
+.vuelta-block .vuelta-body .input-group select, .vuelta-block .vuelta-body .input-group textarea {
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+.vuelta-block .vuelta-body .input-group.full-width {
+  grid-column: span 3;
+}/*# sourceMappingURL=main.css.map */

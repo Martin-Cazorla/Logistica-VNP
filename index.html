@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics - Dashboard Global</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="dashboard-root">
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="brand-section">
+                <h1>Control de Vueltas</h1>
+            </div>
+
+            <nav class="main-nav">
+                <a href="#" class="nav-item active">Panel de Carga</a>
+                <a href="#" class="nav-item">Indicadores</a>
+                <a href="#" class="nav-item">Historial</a>
+            </nav>
+
+            <div class="metrics-section">
+                <div class="kpi-group">
+                    <div class="kpi-box">
+                        <span class="label">Unidades</span>
+                        <span id="kpi-ruta" class="value">0</span>
+                    </div>
+                    <div class="kpi-box">
+                        <span class="label">Pendientes</span>
+                        <span id="kpi-libres" class="value">0</span>
+                    </div>
+                    <div class="kpi-box extra">
+                        <span class="label">Extras</span>
+                        <span id="kpi-extras" class="value">0</span>
+                    </div>
+                </div>
+                
+                <div class="date-control">
+                    <input type="date" id="fecha-operacion">
+                    <button class="btn-finish">FINALIZAR JORNADA</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="viewport-main">
+        <div id="grid-unidades" class="units-grid">
+            <div class="card-add-unit">
+                <input type="text" id="input-nueva-unidad" placeholder="ID UNIDAD + ENTER">
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/pages/main.js"></script>
+    <script type="module" src="js/modules/gestion-vueltas.js"></script>
+
+    <footer class="system-footer">
+        <div class="footer-content">
+            <span>© 2026 TMS Logistics - Terminal Martinez</span>
+            <div class="status-indicator">
+                <span class="dot"></span> SISTEMA EN LÍNEA
+            </div>
+        </div>
+    </footer>
+
+    <dialog id="modal-gestion" class="modal-base">
+        <div class="modal-content">
+            <header>
+                <h3>Unidad: <span id="modal-id-display">--</span></h3>
+                <button id="close-modal">×</button>
+            </header>
+            <div id="vueltas-detalle-container"></div>
+            <footer>
+                <button id="btn-save-modal" class="btn-save">GUARDAR CAMBIOS</button>
+            </footer>
+        </div>
+    </dialog>
+
+    <dialog id="modal-alta-unidad" class="modal-base">
+        <div class="modal-content">
+            <header>
+                <h3>Alta de Nueva Unidad</h3>
+                <button id="close-alta-modal" class="btn-close">×</button>
+            </header>
+            <form id="form-alta-unidad" class="form-standard">
+                <div class="form-group">
+                    <label>ID Unidad</label>
+                    <input type="text" id="alta-id" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Chofer</label>
+                    <input type="text" id="alta-chofer" required placeholder="Nombre completo">
+                </div>
+                <div class="form-group">
+                    <label>Modelo / Vehículo</label>
+                    <input type="text" id="alta-modelo" required placeholder="Ej: Renault Master">
+                </div>
+                <div class="form-group">
+                    <label>Tamaño</label>
+                    <select id="alta-tamano">
+                        <option value="Chica">Chica</option>
+                        <option value="Grande">Grande</option>
+                    </select>
+                </div>
+                <footer class="modal-actions">
+                    <button type="button" id="btn-cancelar-alta" class="btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn-save">Registrar en Sistema</button>
+                </footer>
+            </form>
+        </div>
+    </dialog>
+
+    <template id="template-card-unidad">
+        <div class="unit-card">
+            <div class="card-header">
+                <span class="unit-id"></span>
+                <div class="header-right">
+                    <button class="btn-campo-toggle" title="Marcar/Desmarcar Campo">
+                        🚩 <span class="unit-badge">CAMPO</span>
+                    </button>
+                    <button class="btn-delete-card" title="Eliminar">🗑️</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="driver-name"></p>
+                
+                <div class="bandas-check-group">
+                    <button class="btn-banda" data-banda="10-14">10:00</button>
+                    <button class="btn-banda" data-banda="13-16">13:00</button>
+                    <button class="btn-banda" data-banda="16-19">16:00</button>
+                    <button class="btn-banda" data-banda="19-21">19:00</button>
+                </div>
+
+                <div class="vueltas-counter">
+                    <span class="v-count">0</span>/4
+                </div>
+            </div>
+            <div class="card-footer">
+                <select class="select-ingreso"></select>
+                <button class="btn-edit-unit">NOTAS / EXTRA</button>
+            </div>
+        </div>
+    </template>
+
+    <script type="module" src="js/pages/main.js"></script>
+    <script type="module" src="js/modules/gestion-vueltas.js"></script>
+</body>
+</html>

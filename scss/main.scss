@@ -1,0 +1,15 @@
+// 1. Configuraciones Globales
+@use "sass:color";
+@import 'base/variables';
+@import 'base/reset';
+
+// 2. Layout (Estructura)
+@import 'layout/dashboard';
+
+// 3. Componentes (Piezas reutilizables)
+@import 'components/cards';
+@import 'components/kpis';   // <--- Aquí agregamos el nuevo archivo
+@import 'components/modals';
+
+// 4. Páginas específicas (Estilos que solo existen en una vista)
+@import 'pages/index';
