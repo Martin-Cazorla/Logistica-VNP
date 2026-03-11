@@ -1,30 +1,23 @@
 .dashboard-root {
     height: 100vh;
-    overflow: hidden; // Bloquea el scroll de toda la pantalla
     display: flex;
     flex-direction: column;
+    overflow: hidden; // Impide el scroll de toda la página
 }
 
 .viewport-main {
     flex: 1;
-    overflow-y: auto; // Solo el grid puede tener scroll si es estrictamente necesario
-    padding: 10px;
+    overflow-y: auto; // Solo este contenedor permite scroll si hay muchas unidades
+    padding: 20px;
     background-color: $bg-body;
 }
 
 .units-grid {
     display: grid;
-    // El ajuste dinámico se hace por JS, pero definimos la base:
+    // Base para el grid, el JS se encarga del minmax dinámico
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
     align-content: start;
-}
-
-.main-nav {
-    height: $footer-h;
-    background: $white;
-    border-top: 1px solid $border;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    flex-shrink: 0;
+    max-width: 1600px;
+    margin: 0 auto;
 }

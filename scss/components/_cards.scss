@@ -18,6 +18,7 @@
     }
 }
 
+// --- TARJETA DE UNIDAD ---
 .unit-card {
     position: relative; 
     background: $white;
@@ -36,45 +37,43 @@
     &.size-grande { border-top: 4px solid $primary; }
     &.size-chica { border-top: 4px solid #aaa; }
 
-    // --- PRIORIDAD: AUSENTE (Basado en image_4fccb6.png) ---
+    // --- PRIORIDAD 1: AUSENTE (Basado en image_4fccb6.png) ---
     &.status-absent {
         filter: grayscale(1) !important;
         opacity: 0.6 !important;
         background-color: #f2f2f2 !important;
         border-left-color: #888 !important;
-        border-top-color: #888 !important; // Apaga el color del tamaño
+        border-top-color: #888 !important; 
         
         .unit-id, .driver-name, .v-count { color: #666; }
         .btn-banda, .btn-edit-unit { pointer-events: none; opacity: 0.3; }
-        .select-ingreso { pointer-events: auto; opacity: 1; } // Permite "volver" de ausente
+        .select-ingreso { pointer-events: auto; opacity: 1; } 
     }
 
-    // --- ALERTA DE CAMPO (PULSO Y BADGE ROJO) ---
-    &.alert-campo {
-        animation: pulse-border 2s infinite;
-        border-left-color: $accent !important;
+    // --- PRIORIDAD 2: VUELTA EXTRA (Red Sello) ---
+    &.status-extra {
         background-color: #fff8f8;
-
-        .unit-badge {
-            display: inline-block !important; // Muestra el cartel "CAMPO"
-            background: $accent;
-            color: white;
-            padding: 2px 8px;
-            font-size: 0.7rem;
+        border-left-color: $accent !important;
+        
+        &::after {
+            content: "VUELTA EXTRA" !important;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            border: 3px solid $accent;
+            color: $accent;
+            padding: 8px;
             font-weight: 900;
-            border-radius: 4px;
-            margin-left: 5px;
-            text-transform: uppercase;
+            font-size: 1rem; 
+            white-space: nowrap;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 10;
         }
-
-        .btn-campo-toggle { 
-            filter: grayscale(0) !important; 
-            color: $accent; 
-        }
+        .v-count { color: $accent; }
     }
 
-    // --- ESTADO: JORNADA CUMPLIDA ---
-    &.status-complete {
+    // --- PRIORIDAD 3: JORNADA CUMPLIDA (Green Sello) ---
+    &.status-complete:not(.status-extra) {
         filter: grayscale(0.8);
         background-color: #e8f5e9;
         border-left-color: $success;
@@ -94,22 +93,33 @@
             z-index: 10;
         }
         .v-count { color: $success; }
+    }
 
-        &.status-extra {
-        border-left-color: $accent !important; // Borde rojo de alerta
-        
-        &::after {
-            content: "VUELTA EXTRA" !important;
-            color: $accent !important;
-            border-color: $accent !important;
-            background-color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem; // Un poco más grande para que resalte
+    // --- ALERTA DE CAMPO (PULSO Y BADGE ROJO) ---
+    &.alert-campo {
+        animation: pulse-border 2s infinite;
+        border-left-color: $accent !important;
+        background-color: #fff8f8;
+
+        .unit-badge {
+            display: inline-block !important; 
+            background: $accent;
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            border-radius: 4px;
+            margin-left: 5px;
+            text-transform: uppercase;
+        }
+
+        .btn-campo-toggle { 
+            filter: grayscale(0) !important; 
+            color: $accent; 
         }
     }
-    
-    }
 
-    // --- CABECERA ---
+    // --- ESTRUCTURA INTERNA ---
     .card-header {
         display: flex;
         justify-content: space-between;
@@ -124,7 +134,6 @@
         align-items: center;
     }
 
-    // --- BOTONES DE ACCIÓN ---
     .btn-campo-toggle {
         background: transparent;
         border: none;
@@ -134,8 +143,7 @@
         transition: 0.3s;
         display: flex;
         align-items: center;
-
-        .unit-badge { display: none; } // Oculto si no hay alerta
+        .unit-badge { display: none; } 
     }
 
     .btn-delete-card {
@@ -147,7 +155,6 @@
         &:hover { background: rgba($accent, 0.1); border-radius: 4px; }
     }
 
-    // --- CONTENIDO ---
     .driver-name {
         font-size: 0.75rem;
         color: #666;
@@ -169,6 +176,7 @@
             background: #f8f9fa;
             border-radius: 4px;
             cursor: pointer;
+            transition: all 0.2s;
             
             &.active {
                 background: $success;
@@ -214,6 +222,7 @@
         border: none;
         cursor: pointer;
         z-index: 2;
+        &:hover { background: lighten($primary, 10%); }
     }
 }
 

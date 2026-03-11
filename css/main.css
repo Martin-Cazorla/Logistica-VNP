@@ -20,32 +20,165 @@ button {
 
 .dashboard-root {
   height: 100vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .viewport-main {
   flex: 1;
   overflow-y: auto;
-  padding: 10px;
+  padding: 20px;
   background-color: #f0f2f5;
 }
 
 .units-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
   align-content: start;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
-.main-nav {
-  height: 50px;
-  background: #ffffff;
-  border-top: 1px solid #dcdcdc;
+.main-header {
+  background-color: #0a192f;
+  color: #ccd6f6;
+  padding: 12px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.main-header .header-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+.main-header .brand-section h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #64ffda;
+}
+.main-header .brand-section p {
+  margin: 0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: #8892b0;
+  font-weight: 600;
+}
+.main-header .main-nav {
+  display: flex;
+  background: #64ffda;
+  padding: 5px;
+  border-radius: 10px;
+}
+.main-header .main-nav .nav-item {
+  color: #0a192f;
+  text-decoration: none;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+.main-header .main-nav .nav-item:hover {
+  color: #ccd6f6;
+  background: rgba(255, 255, 255, 0.1);
+}
+.main-header .main-nav .nav-item.active {
+  color: #0a192f;
+  background: #64ffda;
+}
+.main-header .metrics-section {
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  flex-shrink: 0;
+  gap: 20px;
+}
+.main-header .metrics-section .kpi-group {
+  display: flex;
+  gap: 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 20px;
+}
+.main-header .metrics-section .kpi-box {
+  text-align: center;
+  min-width: 70px;
+}
+.main-header .metrics-section .kpi-box .label {
+  display: block;
+  font-size: 0.6rem;
+  color: #8892b0;
+  text-transform: uppercase;
+}
+.main-header .metrics-section .kpi-box .value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ccd6f6;
+}
+.main-header .metrics-section .kpi-box.extra .value {
+  color: #ff4d4d;
+}
+.main-header .date-control {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.main-header .date-control input[type=date] {
+  background: #112240;
+  border: 1px solid #233554;
+  color: #64ffda;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+}
+.main-header .date-control input[type=date]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+.main-header .date-control .btn-finish {
+  background: #64ffda;
+  color: #0a192f;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.main-header .date-control .btn-finish:hover {
+  background: rgb(49, 255, 205.8258064516);
+}
+
+.system-footer {
+  background: #f8f9fa;
+  padding: 10px 0;
+  font-size: 0.7rem;
+  color: #666;
+  border-top: 1px solid #eee;
+}
+.system-footer .footer-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 25px;
+  display: flex;
+  justify-content: space-between;
+}
+.system-footer .status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+}
+.system-footer .status-indicator .dot {
+  width: 8px;
+  height: 8px;
+  background: #2ecc71;
+  border-radius: 50%;
 }
 
 .grid-divider {
@@ -105,6 +238,51 @@ button {
   pointer-events: auto;
   opacity: 1;
 }
+.unit-card.status-extra {
+  background-color: #fff8f8;
+  border-left-color: #e30613 !important;
+}
+.unit-card.status-extra::after {
+  content: "VUELTA EXTRA" !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  border: 3px solid #e30613;
+  color: #e30613;
+  padding: 8px;
+  font-weight: 900;
+  font-size: 1rem;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+}
+.unit-card.status-extra .v-count {
+  color: #e30613;
+}
+.unit-card.status-complete:not(.status-extra) {
+  filter: grayscale(0.8);
+  background-color: #e8f5e9;
+  border-left-color: #28a745;
+}
+.unit-card.status-complete:not(.status-extra)::after {
+  content: "JORNADA CUMPLIDA";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  border: 2px solid #28a745;
+  color: #28a745;
+  padding: 5px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+}
+.unit-card.status-complete:not(.status-extra) .v-count {
+  color: #28a745;
+}
 .unit-card.alert-campo {
   animation: pulse-border 2s infinite;
   border-left-color: #e30613 !important;
@@ -124,39 +302,6 @@ button {
 .unit-card.alert-campo .btn-campo-toggle {
   filter: grayscale(0) !important;
   color: #e30613;
-}
-.unit-card.status-complete {
-  filter: grayscale(0.8);
-  background-color: #e8f5e9;
-  border-left-color: #28a745;
-}
-.unit-card.status-complete::after {
-  content: "JORNADA CUMPLIDA";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-15deg);
-  border: 2px solid #28a745;
-  color: #28a745;
-  padding: 5px;
-  font-weight: 800;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 10;
-}
-.unit-card.status-complete .v-count {
-  color: #28a745;
-}
-.unit-card.status-complete.status-extra {
-  border-left-color: #e30613 !important;
-}
-.unit-card.status-complete.status-extra::after {
-  content: "VUELTA EXTRA" !important;
-  color: #e30613 !important;
-  border-color: #e30613 !important;
-  background-color: rgba(255, 255, 255, 0.9);
-  font-size: 1rem;
 }
 .unit-card .card-header {
   display: flex;
@@ -217,6 +362,7 @@ button {
   background: #f8f9fa;
   border-radius: 4px;
   cursor: pointer;
+  transition: all 0.2s;
 }
 .unit-card .bandas-check-group .btn-banda.active {
   background: #28a745;
@@ -261,6 +407,9 @@ button {
   border: none;
   cursor: pointer;
   z-index: 2;
+}
+.unit-card .btn-edit-unit:hover {
+  background: rgb(0, 76.5, 153);
 }
 
 @keyframes pulse-border {

@@ -1,13 +1,16 @@
 // Paleta de colores profesional
-$primary: #003366;    // Azul industrial
-$accent: #e30613;     // Rojo alerta (River Plate style)
-$success: #28a745;    // Verde ok
-$bg-body: #f0f2f5;    // Fondo suave
+$primary: #003366;    
+$accent: #e30613;     
+$success: #28a745;    
+$bg-body: #f0f2f5;    
 $white: #ffffff;
 $text: #1a1a1a;
 $border: #dcdcdc;
 
+// Colores Header (Dark Mode)
+$header-bg: #0a192f;
+$header-text: #ccd6f6;
+$header-accent: #64ffda;
+
 // Tipografía y dimensiones
 $font-main: 'Inter', sans-serif;
-$header-h: 60px;
-$footer-h: 50px;
