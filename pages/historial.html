@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial - TMS Logistics</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="dashboard-root">
+    
+    <header class="main-header">
+        <div class="header-container">
+            <div class="brand-section">
+                <h1>Control de Vueltas</h1>
+                <p>Histórico de Operaciones</p>
+            </div>
+
+            <nav class="main-nav">
+                <a href="../index.html" class="nav-item">Panel de Carga</a>
+                <a href="indicadores.html" class="nav-item">Indicadores</a>
+                <a href="historial.html" class="nav-item active">Historial</a>
+            </nav>
+
+            <div class="metrics-section">
+                <div class="date-control">
+                    <div class="search-wrapper">
+                        <input type="text" id="busqueda-unidad" placeholder="Buscar unidad (Ej: 101)..." class="input-search">
+                    </div>
+                    
+                    <label>Ver Mes:</label>
+                    <input type="month" id="filtro-mes-historial">
+                    <button id="btn-exportar" class="btn-finish">EXPORTAR EXCEL</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="viewport-main">
+        <div class="history-wrapper">
+            <div class="table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Unidad</th>
+                            <th>Chofer</th>
+                            <th class="text-center">Vueltas</th>
+                            <th>Zonas Cubiertas</th>
+                            <th>Observaciones Generales</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-historial">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="system-footer">
+        <div class="footer-content">
+            <span>© 2026 TMS Logistics - Historial</span>
+        </div>
+    </footer>
+
+    <script type="module" src="../js/pages/historial.js"></script>
+</body>
+</html>

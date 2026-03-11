@@ -1,0 +1,98 @@
+.history-wrapper {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.table-container {
+    background: $white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden; // Redondea las esquinas de la tabla
+    border: 1px solid $border;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: $text;
+
+    thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        
+        th {
+            background-color: #f8fafc;
+            color: $primary;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 18px 15px;
+            text-align: left;
+            border-bottom: 2px solid $border;
+            font-size: 0.75rem;
+        }
+    }
+
+    tbody {
+        tr {
+            transition: background 0.2s;
+            &:last-child td { border-bottom: none; }
+            &:hover { background-color: #f1f5f9; }
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+            line-height: 1.4;
+        }
+    }
+
+    // Estilos para las celdas específicas
+    .col-fecha { font-weight: 700; color: $primary; white-space: nowrap; }
+    
+    .col-unidad {
+        span {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-family: 'Courier New', Courier, monospace;
+        }
+    }
+
+    .badge-vueltas {
+        background: $primary;
+        color: white;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 800;
+        margin: 0 auto;
+        font-size: 0.8rem;
+    }
+
+    .obs-text {
+        font-size: 0.8rem;
+        color: #64748b;
+        max-width: 400px;
+        font-style: italic;
+    }
+
+    .text-center { text-align: center; }
+}
+
+// Highlight de búsqueda (image_c53d80.png)
+mark {
+    background-color: #fef08a !important;
+    color: #854d0e !important;
+    padding: 0 2px;
+    border-radius: 2px;
+}
