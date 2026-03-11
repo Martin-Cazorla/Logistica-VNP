@@ -10,20 +10,18 @@ export function renderizarUnidades(unidades) {
     if (!grid || !template) return;
     grid.innerHTML = '';
 
-    // 1. Filtramos los grupos
+    // 1. Filtramos los grupos para mantener el orden visual
     const grupo10 = unidades.filter(u => u.horarioIngreso === '10:00hs');
     const grupo11 = unidades.filter(u => u.horarioIngreso === '11:00hs');
     const otros = unidades.filter(u => u.horarioIngreso !== '10:00hs' && u.horarioIngreso !== '11:00hs');
 
     const inyectarGrupo = (lista, titulo) => {
         if (lista.length > 0) {
-            // Creamos el divisor visual
             const div = document.createElement('div');
             div.className = 'grid-divider';
             div.innerHTML = `<span>${titulo}</span>`;
             grid.appendChild(div);
 
-            // Inyectamos las tarjetas de ese grupo
             lista.forEach(uni => grid.appendChild(crearCardUnidad(uni)));
         }
     };
@@ -40,6 +38,9 @@ export function renderizarUnidades(unidades) {
     grid.appendChild(cardAdd);
 
     if (window.configurarInputNuevo) window.configurarInputNuevo();
+    
+    // Ajuste dinámico del grid para evitar scroll
+    ajustarTamanioGrid(unidades.length);
 }
 
 function crearCardUnidad(data) {
@@ -47,21 +48,10 @@ function crearCardUnidad(data) {
     const card = clone.querySelector('.unit-card');
 
     // --- CLASES DE ESTADO CRÍTICAS ---
-    if (data.esCampo) {
-        card.classList.add('alert-campo'); // Activa el pulso y el badge
-    }
-    
-    if (data.horarioIngreso === 'Ausente') {
-        card.classList.add('status-absent'); // Activa el color gris
-    }
-
-    if (data.vueltasTotales >= 3) {
-        card.classList.add('status-complete'); // Activa el sello de jornada
-    }
-
-    if (data.vueltasTotales >= 4) {
-        card.classList.add('status-extra'); // Nueva clase para CSS
-    }
+    if (data.esCampo) card.classList.add('alert-campo');
+    if (data.horarioIngreso === 'Ausente') card.classList.add('status-absent');
+    if (data.vueltasTotales >= 3) card.classList.add('status-complete');
+    if (data.vueltasTotales >= 4) card.classList.add('status-extra');
 
     // Tamaño de unidad
     const tam = data.tamano ? data.tamano.toLowerCase() : 'grande';
@@ -72,7 +62,27 @@ function crearCardUnidad(data) {
     clone.querySelector('.driver-name').innerText = `${data.chofer} (${data.tamano})`;
     clone.querySelector('.v-count').innerText = data.vueltasTotales || 0;
 
-    // Configuración de botones de banda rápida
+    // --- LÓGICA BOTÓN ELIMINAR (CORREGIDA) ---
+    const btnDel = clone.querySelector('.btn-delete-card');
+    if (btnDel) {
+        btnDel.onclick = async (e) => {
+            e.preventDefault();
+            e.stopPropagation(); // Evita que el click active otros eventos de la tarjeta
+
+            const confirmar = confirm(`¿Deseas quitar la unidad ${data.unidad} de la jornada?`);
+            if (confirmar) {
+                try {
+                    await eliminarRegistro(data.idFirebase);
+                    console.log(`Unidad ${data.unidad} eliminada.`);
+                } catch (error) {
+                    console.error("Error al eliminar:", error);
+                    alert("No se pudo eliminar la unidad.");
+                }
+            }
+        };
+    }
+
+    // --- BOTONES DE BANDA RÁPIDA ---
     const botones = clone.querySelectorAll('.btn-banda');
     botones.forEach(btn => {
         const bandaKey = btn.dataset.banda;
@@ -87,7 +97,7 @@ function crearCardUnidad(data) {
             } else {
                 vueltas.push({ banda: bandaKey, estado: 'Salida', nro: Date.now() });
             }
-            const { actualizarRegistro } = await import('../firebase/db-operations.js');
+            // Eliminamos el import dinámico para mayor velocidad
             await actualizarRegistro(data.idFirebase, { 
                 detalleVueltas: vueltas,
                 vueltasTotales: vueltas.length 
@@ -99,19 +109,19 @@ function crearCardUnidad(data) {
     const btnCampo = clone.querySelector('.btn-campo-toggle');
     btnCampo.onclick = async (e) => {
         e.stopPropagation();
-        const { actualizarRegistro } = await import('../firebase/db-operations.js');
         await actualizarRegistro(data.idFirebase, { esCampo: !data.esCampo });
     };
 
+    // Botón Gestionar (Notas)
     const btnGestion = clone.querySelector('.btn-edit-unit');
-
-btnGestion.onclick = () => {
-    if (typeof window.abrirGestionVueltas === 'function') {
-        window.abrirGestionVueltas(data.idFirebase);
-    } else {
-        console.error("Error: La función abrirGestionVueltas no está cargada. Revisa gestion-vueltas.js");
-    }
-};
+    btnGestion.onclick = (e) => {
+        e.stopPropagation();
+        if (typeof window.abrirGestionVueltas === 'function') {
+            window.abrirGestionVueltas(data.idFirebase);
+        } else {
+            console.error("Error: Función abrirGestionVueltas no cargada.");
+        }
+    };
 
     // Selector Ingreso
     const select = clone.querySelector('.select-ingreso');
@@ -122,7 +132,6 @@ btnGestion.onclick = () => {
         select.appendChild(el);
     });
     select.onchange = async (e) => {
-        const { actualizarRegistro } = await import('../firebase/db-operations.js');
         await actualizarRegistro(data.idFirebase, { horarioIngreso: e.target.value });
     };
 
@@ -130,7 +139,6 @@ btnGestion.onclick = () => {
 }
 
 function ajustarTamanioGrid(total) {
-    // Si hay muchas unidades, reducimos drásticamente el tamaño para que entren
     if (total > 15) {
         grid.style.gap = "8px";
         grid.style.gridTemplateColumns = "repeat(auto-fill, minmax(140px, 1fr))";
