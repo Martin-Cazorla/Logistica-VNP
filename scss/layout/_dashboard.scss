@@ -12,6 +12,30 @@
     background-color: $bg-body;
 }
 
+.page-indicadores {
+    .viewport-main {
+        display: block; 
+        height: calc(100vh - 70px); 
+        overflow-x: hidden;
+        padding: 40px; // Más aire a los costados para que se vea pro
+    }
+
+    // AGREGAMOS ESTO: Para que los elementos internos ocupen el ancho
+    .indicators-grid {
+        max-width: 1400px; // Evita que en monitores ultra-wide se deforme
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        width: 100%; // Ocupa todo el ancho del viewport-main
+    }
+
+    .chart-card {
+        width: 100%; // Forzamos que la tarjeta del gráfico sea ancha
+        // ... el resto de tu código de chart-wrapper
+    }
+}
+
 .units-grid {
     display: grid;
     // Base para el grid, el JS se encarga del minmax dinámico
