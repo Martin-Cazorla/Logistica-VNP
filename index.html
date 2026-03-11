@@ -144,6 +144,21 @@
         </div>
     </template>
 
+    <div id="modal-cierre-contenedor" class="modal-global">
+        <div class="modal-content"> <header>
+                <h2>Finalizar Jornada - <span id="fecha-cierre-display"></span></h2>
+            </header>
+            <div class="modal-body">
+                <p>Introduce las observaciones generales del día antes de cerrar:</p>
+                <textarea id="obs-cierre-final" placeholder="Ej: Novedades del personal..."></textarea>
+            </div>
+            <footer class="modal-actions">
+                <button id="btn-confirmar-cierre" class="btn-primary">Confirmar Cierre</button>
+                <button onclick="cerrarModalCierre()" class="btn-secondary">Cancelar</button>
+            </footer>
+        </div>
+    </div>
+
     <script type="module" src="js/pages/main.js"></script>
     <script type="module" src="js/modules/gestion-vueltas.js"></script>
 </body>

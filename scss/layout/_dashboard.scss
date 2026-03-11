@@ -45,3 +45,14 @@
     max-width: 1600px;
     margin: 0 auto;
 }
+
+.jornada-bloqueada {
+    .unit-card {
+        pointer-events: none; // Desactiva clicks en las tarjetas
+        opacity: 0.9;
+        filter: saturate(0.5);
+    }
+    .card-add-unit {
+        display: none; // Oculta el cuadro de agregar unidad
+    }
+}
