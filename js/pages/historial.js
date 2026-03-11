@@ -1,106 +1,82 @@
-/**
- * historial.js - Gestión de consulta histórica y filtrado local
- */
 import { db } from '../firebase/firebase-config.js';
 import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const tbody = document.getElementById('tbody-historial');
 const filtroMes = document.getElementById('filtro-mes-historial');
 const busquedaUnidad = document.getElementById('busqueda-unidad');
+const btnExportar = document.getElementById('btn-exportar');
 
-// Almacén temporal para filtrar en memoria y ahorrar lecturas de Firebase
 let registrosDelMes = []; 
 
-// 1. Inicialización de Fecha (Mes Actual)
+// --- INICIALIZACIÓN ---
 const ahora = new Date();
 const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
-if (filtroMes) {
-    filtroMes.value = mesActual;
-    filtroMes.onchange = () => cargarDatosHistorial(filtroMes.value);
-}
+filtroMes.value = mesActual;
 
-// 2. Evento de Búsqueda en tiempo real
-if (busquedaUnidad) {
-    busquedaUnidad.oninput = () => aplicarFiltrosLocales();
-}
+// --- EVENTOS ---
+filtroMes.onchange = () => cargarDatosHistorial(filtroMes.value);
+busquedaUnidad.oninput = () => aplicarFiltrosLocales();
+btnExportar.onclick = () => exportarAExcel();
 
-/**
- * Trae todos los documentos del mes seleccionado desde Firestore
- */
 async function cargarDatosHistorial(mesAnio) {
-    if (!tbody) return;
-    
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 30px;">Cargando registros del mes...</td></tr>';
-    
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando...</td></tr>';
     try {
-        // Consultamos el rango del mes (del día 01 al 31)
         const q = query(
             collection(db, "registros_jornada"),
             where("fecha", ">=", `${mesAnio}-01`),
             where("fecha", "<=", `${mesAnio}-31`),
             orderBy("fecha", "desc")
         );
-
         const querySnapshot = await getDocs(q);
-        registrosDelMes = []; 
-
-        querySnapshot.forEach((doc) => {
-            registrosDelMes.push({ idFirebase: doc.id, ...doc.data() });
-        });
-
-        aplicarFiltrosLocales(); 
-
-    } catch (error) {
-        console.error("Error al cargar historial:", error);
-        tbody.innerHTML = '<tr><td colspan="6" style="color:red; text-align:center;">Error al recuperar datos. Revisa la consola.</td></tr>';
+        registrosDelMes = [];
+        querySnapshot.forEach((doc) => registrosDelMes.push({ id: doc.id, ...doc.data() }));
+        aplicarFiltrosLocales();
+    } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="6">Error al cargar datos.</td></tr>';
     }
 }
 
 /**
- * Filtra el array local por el ID de unidad sin re-consultar Firebase
+ * CORRECCIÓN: Búsqueda exacta
+ * Si el usuario escribe, comparamos el valor exacto para evitar que 101 traiga 1018.
  */
 function aplicarFiltrosLocales() {
-    const termino = busquedaUnidad.value.trim().toLowerCase();
+    const termino = busquedaUnidad.value.trim();
     
     const filtrados = registrosDelMes.filter(reg => {
-        const unidadStr = reg.unidad ? reg.unidad.toString().toLowerCase() : "";
-        return unidadStr.includes(termino);
+        if (termino === "") return true;
+        // Usamos == para comparar número con string de forma segura
+        return reg.unidad == termino; 
     });
 
-    renderizarTabla(filtrados, termino);
+    renderizarTabla(filtrados);
 }
 
-/**
- * Dibuja las filas en la tabla con los estilos Senior
- */
-function renderizarTabla(lista, resaltado = "") {
-    if (!tbody) return;
+function renderizarTabla(lista) {
     tbody.innerHTML = '';
-    
     if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No se encontraron registros para los criterios seleccionados.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay resultados.</td></tr>';
         return;
     }
 
     lista.forEach((data) => {
         const fila = document.createElement('tr');
-        
-        // Formateo de zonas
         const zonas = data.detalleVueltas?.map(v => v.zona).join(', ') || '---';
         
-        // Lógica de resaltado para la búsqueda
-        let unidadDisplay = data.unidad;
-        if (resaltado && unidadDisplay.toString().toLowerCase().includes(resaltado)) {
-            const regex = new RegExp(`(${resaltado})`, 'gi');
-            unidadDisplay = unidadDisplay.toString().replace(regex, '<mark>$1</mark>');
-        }
+        // Lógica de Extras: Si vueltasTotales es 4 o más, la extra es (total - 3)
+        // O si marcamos el check de extra en el modal, suele ser 1.
+        const cantidadExtras = data.vueltasTotales >= 4 ? (data.vueltasTotales - 3) : 0;
 
         fila.innerHTML = `
             <td class="col-fecha">${data.fecha}</td>
-            <td class="col-unidad"><span>${unidadDisplay}</span></td>
+            <td class="col-unidad"><span>${data.unidad}</span></td>
             <td style="font-weight: 600;">${data.chofer}</td>
             <td class="text-center">
-                <div class="badge-vueltas">${data.vueltasTotales || 0}</div>
+                <div class="badge-vueltas">${data.vueltasTotales > 3 ? 3 : data.vueltasTotales}</div>
+            </td>
+            <td class="text-center">
+                <div class="badge-extras ${cantidadExtras > 0 ? 'active' : ''}">${cantidadExtras}</div>
             </td>
             <td>${zonas}</td>
             <td class="obs-text">${data.observaciones || 'Sin observaciones'}</td>
@@ -109,5 +85,37 @@ function renderizarTabla(lista, resaltado = "") {
     });
 }
 
-// Carga inicial al abrir la página
+/**
+ * FUNCIÓN EXPORTAR A EXCEL
+ * Descarga exactamente lo que está renderizado en el tbody en ese momento.
+ */
+function exportarAExcel() {
+    const filas = [];
+    const headers = ["Fecha", "Unidad", "Chofer", "Vueltas", "Extras", "Zonas", "Observaciones"];
+    filas.push(headers);
+
+    const trs = tbody.querySelectorAll('tr');
+    if (trs.length === 0 || trs[0].innerText.includes("No hay")) return;
+
+    trs.forEach(tr => {
+        const celdas = tr.querySelectorAll('td');
+        filas.push([
+            celdas[0].innerText,
+            celdas[1].innerText,
+            celdas[2].innerText,
+            celdas[3].innerText,
+            celdas[4].innerText, // Nueva celda de Extras
+            celdas[5].innerText,
+            celdas[6].innerText
+        ]);
+    });
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(filas);
+    ws['!cols'] = [{wch:12}, {wch:10}, {wch:25}, {wch:10}, {wch:10}, {wch:30}, {wch:40}];
+    XLSX.utils.book_append_sheet(wb, ws, "Historial");
+    XLSX.writeFile(wb, `Reporte_TMS_${filtroMes.value}.xlsx`);
+}
+
+// Carga inicial
 cargarDatosHistorial(mesActual);

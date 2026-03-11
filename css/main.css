@@ -611,6 +611,23 @@ button {
   margin: 0 auto;
   font-size: 0.8rem;
 }
+.history-table .badge-extras {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+  margin: 0 auto;
+  font-size: 0.8rem;
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+.history-table .badge-extras.active {
+  background: #e30613;
+  color: white;
+}
 .history-table .obs-text {
   font-size: 0.8rem;
   color: #64748b;
