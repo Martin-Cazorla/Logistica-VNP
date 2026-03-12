@@ -1,7 +1,7 @@
-// --- DIVISOR DE BANDAS (Basado en image_502276.png) ---
+// --- DIVISOR DE BANDAS ---
 .grid-divider {
     grid-column: 1 / -1; 
-    border-bottom: 3px solid $primary; // Línea gruesa y firme
+    border-bottom: 3px solid $primary;
     margin: 25px 0 10px 0;
     display: flex;
     align-items: flex-end;
@@ -31,32 +31,49 @@
     justify-content: space-between;
     transition: transform 0.2s, box-shadow 0.3s;
 
-    &:hover { transform: scale(1.02); }
+    &:hover { transform: scale(1.02); z-index: 5; }
 
     // --- DIFERENCIACIÓN POR TAMAÑO ---
     &.size-grande { border-top: 4px solid $primary; }
     &.size-chica { border-top: 4px solid #aaa; }
 
-    // --- PRIORIDAD 1: AUSENTE (Basado en image_4fccb6.png) ---
-    &.status-absent {
-        filter: grayscale(1) !important;
-        opacity: 0.6 !important;
-        background-color: #f2f2f2 !important;
-        border-left-color: #888 !important;
-        border-top-color: #888 !important; 
+    // --- ESTADO: OBSERVACIONES (Independiente del estado de jornada) ---
+    &.has-observation {
+        border-right: 5px solid #f59e0b; // Marca lateral naranja
+        background-color: #fffdf5; // Fondo apenas amarillento
         
-        .unit-id, .driver-name, .v-count { color: #666; }
-        .btn-banda, .btn-edit-unit { pointer-events: none; opacity: 0.3; }
-        .select-ingreso { pointer-events: auto; opacity: 1; } 
+        .btn-edit-unit {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+            font-weight: 800;
+        }
     }
 
-    // --- PRIORIDAD 2: VUELTA EXTRA (Red Sello) ---
+    // --- ESTADO: FINALIZADA (Manual) ---
+    &.status-finished {
+        border-left-color: #64748b;
+        background-color: #f8fafc;
+        .unit-id { color: #64748b; }
+    }
+
+    // --- PRIORIDAD: AUSENTE ---
+    &.status-absent {
+        filter: grayscale(1);
+        opacity: 0.6;
+        background-color: #f2f2f2;
+        border-color: #888;
+        
+        .btn-banda, .btn-edit-unit { pointer-events: none; opacity: 0.3; }
+    }
+
+    // --- PRIORIDAD: VUELTA EXTRA ---
     &.status-extra {
         background-color: #fff8f8;
-        border-left-color: $accent !important;
+        border-left-color: $accent;
         
         &::after {
-            content: "VUELTA EXTRA" !important;
+            content: "VUELTA EXTRA";
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%) rotate(-15deg);
@@ -72,9 +89,8 @@
         .v-count { color: $accent; }
     }
 
-    // --- PRIORIDAD 3: JORNADA CUMPLIDA (Green Sello) ---
+    // --- PRIORIDAD: JORNADA CUMPLIDA ---
     &.status-complete:not(.status-extra) {
-        filter: grayscale(0.8);
         background-color: #e8f5e9;
         border-left-color: $success;
         
@@ -95,14 +111,13 @@
         .v-count { color: $success; }
     }
 
-    // --- ALERTA DE CAMPO (PULSO Y BADGE ROJO) ---
+    // --- ALERTA DE CAMPO ---
     &.alert-campo {
         animation: pulse-border 2s infinite;
-        border-left-color: $accent !important;
-        background-color: #fff8f8;
+        border-left-color: $accent;
 
         .unit-badge {
-            display: inline-block !important; 
+            display: inline-block; 
             background: $accent;
             color: white;
             padding: 2px 8px;
@@ -110,12 +125,6 @@
             font-weight: 900;
             border-radius: 4px;
             margin-left: 5px;
-            text-transform: uppercase;
-        }
-
-        .btn-campo-toggle { 
-            filter: grayscale(0) !important; 
-            color: $accent; 
         }
     }
 
@@ -128,105 +137,50 @@
         .unit-id { font-weight: 800; font-size: 1.1rem; }
     }
 
-    .header-right {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-    }
+    .header-right { display: flex; gap: 6px; align-items: center; }
 
     .btn-campo-toggle {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 1.1rem;
-        filter: grayscale(1);
-        transition: 0.3s;
-        display: flex;
-        align-items: center;
+        background: transparent; border: none; cursor: pointer;
+        font-size: 1.1rem; filter: grayscale(1); transition: 0.3s;
+        &.active { filter: grayscale(0); }
         .unit-badge { display: none; } 
     }
 
     .btn-delete-card {
-        background: transparent;
-        font-size: 1rem;
-        padding: 2px;
-        border: none;
-        cursor: pointer;
-        &:hover { background: rgba($accent, 0.1); border-radius: 4px; }
+        background: transparent; border: none; cursor: pointer;
+        &:hover { color: $accent; }
     }
 
     .driver-name {
-        font-size: 0.75rem;
-        color: #666;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 0.75rem; color: #666;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     .bandas-check-group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 5px;
-        margin: 10px 0;
-
+        display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin: 10px 0;
         .btn-banda {
-            font-size: 0.65rem;
-            padding: 4px;
-            border: 1px solid $border;
-            background: #f8f9fa;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            
-            &.active {
-                background: $success;
-                color: white;
-                border-color: $success;
-                &::after { content: " ✓"; }
-            }
+            font-size: 0.65rem; padding: 4px; border: 1px solid $border;
+            background: #f8f9fa; border-radius: 4px; cursor: pointer;
+            &.active { background: $success; color: white; border-color: $success; }
         }
     }
 
-    .vueltas-counter {
-        font-size: 1.2rem;
-        font-weight: 700;
-        text-align: center;
-        margin: 5px 0;
-    }
+    .vueltas-counter { font-size: 1.2rem; font-weight: 700; text-align: center; }
 
-    .card-footer {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: auto;
-    }
+    .card-footer { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
 
     .select-ingreso {
-        padding: 4px;
-        font-size: 0.75rem;
-        border-radius: 4px;
-        border: 1px solid $border;
-        background-color: $bg-body;
-        font-weight: 600;
-        color: $primary;
-        &:focus { border-color: $primary; outline: none; }
+        padding: 4px; font-size: 0.75rem; border-radius: 4px;
+        border: 1px solid $border; background-color: $bg-body;
+        font-weight: 600; color: $primary;
     }
 
     .btn-edit-unit {
-        background: $primary;
-        color: white;
-        font-size: 0.7rem;
-        padding: 6px;
-        border-radius: 4px;
-        width: 100%;
-        border: none;
-        cursor: pointer;
-        z-index: 2;
-        &:hover { background: lighten($primary, 10%); }
+        background: $primary; color: white; font-size: 0.7rem;
+        padding: 6px; border-radius: 4px; width: 100%; border: none; cursor: pointer;
     }
 }
 
-// --- ANIMACIÓN PULSO ---
 @keyframes pulse-border {
     0% { box-shadow: 0 0 0 0 rgba(227, 6, 19, 0.4); }
     70% { box-shadow: 0 0 0 12px rgba(227, 6, 19, 0); }

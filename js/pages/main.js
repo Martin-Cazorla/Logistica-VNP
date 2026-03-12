@@ -1,11 +1,12 @@
 /**
- * main.js - Controller del Dashboard con Bloqueo de Jornada
+ * main.js - Controller del Dashboard
  */
 import { db } from '../firebase/firebase-config.js';
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { obtenerRegistrosPorFecha, registrarUnidadEnJornada } from '../firebase/db-operations.js';
 import { renderizarUnidades } from '../modules/ui-render.js';
 import { buscarUnidadGlobal } from '../modules/logistics-logic.js';
+import { cerrarCualquierModal } from '../utils/helpers.js';
 
 let estadoFlota = [];
 let fechaSeleccionada = new Date().toISOString().split('T')[0];
@@ -21,20 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Vincular el botón de Finalizar Jornada del Header
-    const btnFinalizar = document.querySelector('.btn-finish-day') || document.querySelector('.btn-finish');
-    if (btnFinalizar) {
-        btnFinalizar.onclick = () => abrirModalCierre();
-    }
+    const btnFinalizar = document.querySelector('.btn-finish');
+    if (btnFinalizar) btnFinalizar.onclick = () => abrirModalCierre();
 
     inicializarSuscripcion();
 });
 
 async function inicializarSuscripcion() {
-    // 1. Verificamos si el día seleccionado ya está cerrado
     await verificarEstadoDia(fechaSeleccionada);
-
-    // 2. Suscripción en tiempo real a las unidades
     obtenerRegistrosPorFecha(fechaSeleccionada, (datos) => {
         estadoFlota = datos;
         actualizarDashboard();
@@ -43,100 +38,75 @@ async function inicializarSuscripcion() {
 
 async function verificarEstadoDia(fecha) {
     try {
-        const docRef = doc(db, "cierres_jornada", fecha);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            jornadaCerrada = true;
-            document.body.classList.add('jornada-bloqueada');
-            console.warn("JORNADA BLOQUEADA: Los datos son de solo lectura.");
-        } else {
-            jornadaCerrada = false;
-            document.body.classList.remove('jornada-bloqueada');
-        }
+        const docSnap = await getDoc(doc(db, "cierres_jornada", fecha));
+        jornadaCerrada = docSnap.exists();
+        // Agregamos clase al body para cambios visuales en CSS
+        document.body.classList.toggle('jornada-bloqueada', jornadaCerrada);
     } catch (error) {
-        console.error("Error al verificar estado del día:", error);
+        console.error("Error al verificar estado:", error);
     }
 }
 
 function actualizarDashboard() {
-    const totalUnidades = estadoFlota.length;
-    const unidadesConExtra = estadoFlota.filter(u => u.vueltasTotales >= 4).length;
-    const pendientes = estadoFlota.filter(u => u.vueltasTotales < 3 && u.horarioIngreso !== 'Ausente').length;
+    const extras = estadoFlota.filter(u => u.vueltasTotales >= 4).length;
+    const pendientes = estadoFlota.filter(u => u.vueltasTotales < 3 && u.horarioIngreso !== 'Ausente' && !u.finalizada).length;
 
-    // Actualizamos KPIs en el Header
-    const kpiRuta = document.getElementById('kpi-ruta');
-    const kpiExtras = document.getElementById('kpi-extras');
-    const kpiLibres = document.getElementById('kpi-libres');
-
-    if (kpiRuta) kpiRuta.innerText = totalUnidades;
-    if (kpiExtras) kpiExtras.innerText = unidadesConExtra;
-    if (kpiLibres) kpiLibres.innerText = pendientes;
+    if (document.getElementById('kpi-ruta')) document.getElementById('kpi-ruta').innerText = estadoFlota.length;
+    if (document.getElementById('kpi-extras')) document.getElementById('kpi-extras').innerText = extras;
+    if (document.getElementById('kpi-libres')) document.getElementById('kpi-libres').innerText = pendientes;
     
     renderizarUnidades(estadoFlota);
 }
 
-// Vinculamos el Enter al input dinámico de agregar unidad
+// CONFIGURACIÓN DEL INPUT (REFACTORIZADO)
 window.configurarInputNuevo = function() {
     const input = document.getElementById('input-nueva-unidad');
     if (!input) return;
 
     input.onkeypress = async (e) => {
         if (e.key === 'Enter') {
+            // CORRECCIÓN SOLICITADA: Bloqueo de adición en jornada cerrada
             if (jornadaCerrada) {
-                alert("Operación denegada: La jornada del día seleccionado ya ha sido finalizada.");
+                alert("No se pueden AGREGAR unidades a una jornada cerrada.");
                 e.target.value = '';
                 return;
             }
+
             const id = e.target.value.trim();
             if (!id) return;
-            
-            const unidadEncontrada = await buscarUnidadGlobal(id);
-            if (unidadEncontrada) {
-                await registrarUnidadEnJornada(unidadEncontrada, fechaSeleccionada);
+
+            const unidad = await buscarUnidadGlobal(id);
+            if (unidad) {
+                await registrarUnidadEnJornada(unidad, fechaSeleccionada);
             }
             e.target.value = '';
         }
     };
 };
 
-// --- LÓGICA DE CIERRE (MODAL) ---
-
-// Actualiza esta función en tu main.js
 function abrirModalCierre() {
-    const modal = document.getElementById('modal-cierre-contenedor'); // ID actualizado
+    const modal = document.getElementById('modal-cierre-contenedor');
     if (modal) {
         document.getElementById('fecha-cierre-display').innerText = fechaSeleccionada;
         modal.classList.add('active');
     }
 }
 
-// Función global para cerrar el modal (vinculada al botón cancelar)
-window.cerrarModalCierre = function() {
-    const modal = document.getElementById('modal-cierre-contenedor'); // ID actualizado
-    if (modal) modal.classList.remove('active');
+document.getElementById('btn-confirmar-cierre').onclick = async () => {
+    try {
+        await setDoc(doc(db, "cierres_jornada", fechaSeleccionada), {
+            fecha: fechaSeleccionada,
+            observacionGeneral: document.getElementById('obs-cierre-final').value,
+            timestamp: new Date()
+        });
+        alert("Jornada finalizada.");
+        cerrarCualquierModal();
+        location.reload(); 
+    } catch (error) {
+        console.error(error);
+        alert("Error al cerrar jornada.");
+    }
 };
 
-const btnConfirmar = document.getElementById('btn-confirmar-cierre');
-if (btnConfirmar) {
-    btnConfirmar.onclick = async () => {
-        const obsField = document.getElementById('obs-cierre-final');
-        const observacion = obsField ? obsField.value : "";
-
-        try {
-            await setDoc(doc(db, "cierres_jornada", fechaSeleccionada), {
-                fecha: fechaSeleccionada,
-                observacionGeneral: observacion,
-                cerradoPor: "Administrador",
-                timestamp: new Date()
-            });
-
-            alert("Jornada finalizada con éxito. El panel ahora es de solo lectura.");
-            window.cerrarModalCierre();
-            location.reload(); 
-        } catch (error) {
-            console.error("Error al cerrar jornada:", error);
-            alert("Error crítico al cerrar jornada. Revisa la conexión.");
-        }
-    };
-}
+// Exportamos jornadaCerrada para que otros módulos (como gestión-vueltas) puedan consultarla
+export { jornadaCerrada };

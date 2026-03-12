@@ -46,13 +46,60 @@
     margin: 0 auto;
 }
 
+// --- ESTADOS DENTRO DE JORNADA CERRADA (Referencia image_0f080a.png) ---
 .jornada-bloqueada {
     .unit-card {
-        pointer-events: none; // Desactiva clicks en las tarjetas
-        opacity: 0.9;
-        filter: saturate(0.5);
+        filter: none !important; // Quitamos el grayscale general
+        opacity: 1 !important;
+        background-color: #f4f4f4; // Fondo gris muy suave
+        border-left-color: #999; 
+
+        // Sello de Jornada Cumplida (Más sobrio)
+        &.status-complete:not(.status-extra) {
+            background-color: #f0f2f0; // Un verde grisáceo casi imperceptible
+            border-left-color: #849284;
+
+            &::after {
+                border: 2px solid #849284;
+                color: #849284;
+                background-color: rgba(255, 255, 255, 0.9);
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .v-count { color: #555; }
+        }
+
+        // Sello de Vuelta Extra (Más apagado)
+        &.status-extra {
+            background-color: #f5f0f0; 
+            border-left-color: #a38a8a;
+
+            &::after {
+                border: 3px solid #a38a8a;
+                color: #a38a8a;
+                background-color: rgba(255, 255, 255, 0.9);
+                font-weight: 800;
+            }
+            .v-count { color: #555; }
+        }
+
+        // Botón de Notas en modo Lectura/Auditoría
+        .btn-edit-unit {
+            background-color: #4a5568 !important; // Gris oscuro azulado profesional
+            color: white;
+            border: none;
+        }
+
+        // Inputs y Selectores (Efecto deshabilitado prolijo)
+        .select-ingreso, .btn-banda {
+            background-color: #e2e8f0;
+            color: #718096;
+            border-color: #cbd5e0;
+        }
     }
-    .card-add-unit {
-        display: none; // Oculta el cuadro de agregar unidad
-    }
+}
+
+// Asegurémonos que el badge de CAMPO no brille tanto en el cierre
+.jornada-bloqueada .unit-badge {
+    background-color: #718096 !important; // Gris en lugar de rojo
 }

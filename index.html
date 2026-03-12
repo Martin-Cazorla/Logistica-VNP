@@ -70,15 +70,16 @@
         <div class="modal-content">
             <header>
                 <h3>Unidad: <span id="modal-id-display">--</span></h3>
-                <button id="close-modal">×</button>
+                <button onclick="smartClose()">×</button>
             </header>
             <div id="vueltas-detalle-container"></div>
-            <footer>
+            <footer class="modal-actions">
+                <button id="btn-finalizar-unidad" class="btn-finish-unit" style="background:#64748b; color:white;">FINALIZAR JORNADA UNIDAD</button>
                 <button id="btn-save-modal" class="btn-save">GUARDAR CAMBIOS</button>
             </footer>
         </div>
     </dialog>
-
+    
     <dialog id="modal-alta-unidad" class="modal-base">
         <div class="modal-content">
             <header>

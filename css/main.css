@@ -1,4 +1,3 @@
-@charset "UTF-8";
 * {
   margin: 0;
   padding: 0;
@@ -60,12 +59,51 @@ button {
 }
 
 .jornada-bloqueada .unit-card {
-  pointer-events: none;
-  opacity: 0.9;
-  filter: saturate(0.5);
+  filter: none !important;
+  opacity: 1 !important;
+  background-color: #f4f4f4;
+  border-left-color: #999;
 }
-.jornada-bloqueada .card-add-unit {
-  display: none;
+.jornada-bloqueada .unit-card.status-complete:not(.status-extra) {
+  background-color: #f0f2f0;
+  border-left-color: #849284;
+}
+.jornada-bloqueada .unit-card.status-complete:not(.status-extra)::after {
+  border: 2px solid #849284;
+  color: #849284;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.jornada-bloqueada .unit-card.status-complete:not(.status-extra) .v-count {
+  color: #555;
+}
+.jornada-bloqueada .unit-card.status-extra {
+  background-color: #f5f0f0;
+  border-left-color: #a38a8a;
+}
+.jornada-bloqueada .unit-card.status-extra::after {
+  border: 3px solid #a38a8a;
+  color: #a38a8a;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+}
+.jornada-bloqueada .unit-card.status-extra .v-count {
+  color: #555;
+}
+.jornada-bloqueada .unit-card .btn-edit-unit {
+  background-color: #4a5568 !important;
+  color: white;
+  border: none;
+}
+.jornada-bloqueada .unit-card .select-ingreso, .jornada-bloqueada .unit-card .btn-banda {
+  background-color: #e2e8f0;
+  color: #718096;
+  border-color: #cbd5e0;
+}
+
+.jornada-bloqueada .unit-badge {
+  background-color: #718096 !important;
 }
 
 .main-header {
@@ -240,6 +278,7 @@ button {
 }
 .unit-card:hover {
   transform: scale(1.02);
+  z-index: 5;
 }
 .unit-card.size-grande {
   border-top: 4px solid #003366;
@@ -247,30 +286,39 @@ button {
 .unit-card.size-chica {
   border-top: 4px solid #aaa;
 }
-.unit-card.status-absent {
-  filter: grayscale(1) !important;
-  opacity: 0.6 !important;
-  background-color: #f2f2f2 !important;
-  border-left-color: #888 !important;
-  border-top-color: #888 !important;
+.unit-card.has-observation {
+  border-right: 5px solid #f59e0b;
+  background-color: #fffdf5;
 }
-.unit-card.status-absent .unit-id, .unit-card.status-absent .driver-name, .unit-card.status-absent .v-count {
-  color: #666;
+.unit-card.has-observation .btn-edit-unit {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+  font-weight: 800;
+}
+.unit-card.status-finished {
+  border-left-color: #64748b;
+  background-color: #f8fafc;
+}
+.unit-card.status-finished .unit-id {
+  color: #64748b;
+}
+.unit-card.status-absent {
+  filter: grayscale(1);
+  opacity: 0.6;
+  background-color: #f2f2f2;
+  border-color: #888;
 }
 .unit-card.status-absent .btn-banda, .unit-card.status-absent .btn-edit-unit {
   pointer-events: none;
   opacity: 0.3;
 }
-.unit-card.status-absent .select-ingreso {
-  pointer-events: auto;
-  opacity: 1;
-}
 .unit-card.status-extra {
   background-color: #fff8f8;
-  border-left-color: #e30613 !important;
+  border-left-color: #e30613;
 }
 .unit-card.status-extra::after {
-  content: "VUELTA EXTRA" !important;
+  content: "VUELTA EXTRA";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -288,7 +336,6 @@ button {
   color: #e30613;
 }
 .unit-card.status-complete:not(.status-extra) {
-  filter: grayscale(0.8);
   background-color: #e8f5e9;
   border-left-color: #28a745;
 }
@@ -312,11 +359,10 @@ button {
 }
 .unit-card.alert-campo {
   animation: pulse-border 2s infinite;
-  border-left-color: #e30613 !important;
-  background-color: #fff8f8;
+  border-left-color: #e30613;
 }
 .unit-card.alert-campo .unit-badge {
-  display: inline-block !important;
+  display: inline-block;
   background: #e30613;
   color: white;
   padding: 2px 8px;
@@ -324,11 +370,6 @@ button {
   font-weight: 900;
   border-radius: 4px;
   margin-left: 5px;
-  text-transform: uppercase;
-}
-.unit-card.alert-campo .btn-campo-toggle {
-  filter: grayscale(0) !important;
-  color: #e30613;
 }
 .unit-card .card-header {
   display: flex;
@@ -352,22 +393,20 @@ button {
   font-size: 1.1rem;
   filter: grayscale(1);
   transition: 0.3s;
-  display: flex;
-  align-items: center;
+}
+.unit-card .btn-campo-toggle.active {
+  filter: grayscale(0);
 }
 .unit-card .btn-campo-toggle .unit-badge {
   display: none;
 }
 .unit-card .btn-delete-card {
   background: transparent;
-  font-size: 1rem;
-  padding: 2px;
   border: none;
   cursor: pointer;
 }
 .unit-card .btn-delete-card:hover {
-  background: rgba(227, 6, 19, 0.1);
-  border-radius: 4px;
+  color: #e30613;
 }
 .unit-card .driver-name {
   font-size: 0.75rem;
@@ -389,21 +428,16 @@ button {
   background: #f8f9fa;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s;
 }
 .unit-card .bandas-check-group .btn-banda.active {
   background: #28a745;
   color: white;
   border-color: #28a745;
 }
-.unit-card .bandas-check-group .btn-banda.active::after {
-  content: " ✓";
-}
 .unit-card .vueltas-counter {
   font-size: 1.2rem;
   font-weight: 700;
   text-align: center;
-  margin: 5px 0;
 }
 .unit-card .card-footer {
   display: flex;
@@ -420,10 +454,6 @@ button {
   font-weight: 600;
   color: #003366;
 }
-.unit-card .select-ingreso:focus {
-  border-color: #003366;
-  outline: none;
-}
 .unit-card .btn-edit-unit {
   background: #003366;
   color: white;
@@ -433,10 +463,6 @@ button {
   width: 100%;
   border: none;
   cursor: pointer;
-  z-index: 2;
-}
-.unit-card .btn-edit-unit:hover {
-  background: rgb(0, 76.5, 153);
 }
 
 @keyframes pulse-border {
