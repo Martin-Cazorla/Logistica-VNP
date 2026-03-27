@@ -1,0 +1,65 @@
+@import '../base/variables';
+
+/**
+ * ESTADOS DE JORNADA CERRADA (Audit Mode)
+ * Basado en las variables profesionales del proyecto.
+ */
+.jornada-bloqueada {
+    // Desactivamos el botón de agregar unidad (limpieza visual)
+    .card-add-unit {
+        display: none;
+    }
+
+    .unit-card {
+        background-color: lighten($bg-body, 2%);
+        border-color: $border;
+        transition: transform 0.2s ease;
+        
+        // Bloqueo de interacciones directas en la tarjeta
+        // Exceptuamos el botón de notas/comentarios
+        pointer-events: none; 
+
+        // Títulos y textos más sobrios
+        .unit-id { color: darken($border, 40%); }
+        .driver-name { color: lighten($text, 20%); }
+
+        // --- BOTÓN DE NOTAS / RECLAMOS (Única vía de interacción) ---
+        .btn-edit-unit {
+            pointer-events: auto; // Habilitamos el clic específicamente aquí
+            background-color: $primary !important;
+            color: $white;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            
+            &:hover {
+                background-color: lighten($primary, 10%) !important;
+                transform: translateY(-1px);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+
+        // --- ELEMENTOS BLOQUEADOS VISUALMENTE ---
+        .btn-banda, .select-ingreso, .btn-delete-card, .btn-campo-toggle {
+            opacity: 0.5;
+            filter: grayscale(1);
+            cursor: not-allowed;
+        }
+
+        .unit-badge {
+            background-color: #718096 !important; // Gris neutro para CAMPO
+        }
+
+        // Suavizado de sellos de estado
+        &.status-complete { border-left-color: lighten($success, 20%); }
+        &.status-extra { border-left-color: lighten($accent, 25%); }
+    }
+}
+
+// Indicador visual de que la nota es editable incluso en cierre
+.has-observation.jornada-bloqueada .btn-edit-unit::after {
+    content: ' •';
+    color: $header-accent;
+}

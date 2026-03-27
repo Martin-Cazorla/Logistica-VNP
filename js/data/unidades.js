@@ -30,6 +30,7 @@ export const UNIDADES_MAESTRA = [
     { "id": "401", "modelo": "Fiat Fiorino Fire", "tamano": "Chica", "chofer": "Cristian Acosta" },
     { "id": "985", "modelo": "Flete", "tamano": "Chica", "chofer": "Flete" },
     { "id": "984", "modelo": "Flete", "tamano": "Chica", "chofer": "Flete" },
+    { "id": "172", "modelo": "Renault nuevo Master L1H1 AA", "tamano": "Grande", "chofer": "Juan Torrico" },
     { "id": "950", "modelo": "Fiat Fiorino Fire", "tamano": "Chica", "chofer": "Cesar Pizarro" },
     { "id": "983", "modelo": "Flete", "tamano": "Chica", "chofer": "Flete" },
     { "id": "921", "modelo": "Mercedes Sprinter", "tamano": "Grande", "chofer": "Luciano" }
